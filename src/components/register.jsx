@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
     registerUserStart,
@@ -7,14 +7,16 @@ import {
 } from '../slice/auth';
 import authService from '../services/auth';
 import Error from './error';
+import { useNavigate } from 'react-router';
 
 const Register = () => {
     const [username, setUsername] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
-    const { isLoading } = useSelector((state) => state.auth);
+    const { isLoading, loggedIn } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,6 +28,7 @@ const Register = () => {
             const response = await authService.useRegister(user); // ✅ await first
             dispatch(registerUserSuccess(response.data));          // ✅ then dispatch with payload
             console.log(response.data);
+            navigate("/"); // ✅ navigate after successful registration
         } catch (err) {
             const errors = err.response?.data?.errors             // ✅ safe access
                 || { message: ["Something went wrong"] };
@@ -33,6 +36,12 @@ const Register = () => {
             console.log(err);
         }
     };
+
+    useEffect(() => {
+      if(loggedIn) {
+        navigate("/")
+      }
+    }, [])
 
     return (
         <div className='text-center mt-3 mt-md-5'>

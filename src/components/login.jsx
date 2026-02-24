@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginUserFailure, loginUserStart, loginUserSuccess } from '../slice/auth'; // Import actions
 import authService from '../services/auth';
 import Error from './error';
+import { useNavigate } from 'react-router';
+
 
 const Login = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const { isLoading} = useSelector((state) => state.auth);
+  const { isLoading, loggedIn} = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -23,10 +27,17 @@ const handleSubmit = async (e) => {
      const response = await authService.useLogin(user) 
      dispatch(loginUserSuccess(response.user))
      console.log(response.user)
+      navigate("/")
   }catch(err){
      dispatch(loginUserFailure(err.response.data.errors))
   }
 };
+
+useEffect(() => {
+  if(loggedIn) {
+    navigate("/")
+  }
+}, [])
 
   return (
     <div className="text-center mt-3 mt-md-5">
@@ -79,7 +90,7 @@ const handleSubmit = async (e) => {
           <p className="mt-5 mb-3 text-body-secondary">© 2017–2025</p>
         </form>
       </main>
-    </div>
+    </div> 
   );
 };
 

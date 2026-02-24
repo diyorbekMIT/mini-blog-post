@@ -10,6 +10,14 @@ const authService = {
     const response = await axios.post("/users/login", { user }); // Ensure the endpoint is correct
     return response.data;
   },
+
+  async getUser(){
+    try{ const response = await axios.get("/user"); // Ensure the endpoint is correct
+      return response.data;} catch(err){
+        console.log(err)
+      }
+   
+  }
 };
 
-export default authService;
+export default authService;  
