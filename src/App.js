@@ -3,7 +3,9 @@ import {Routes, Route} from "react-router-dom";
 import { useEffect } from "react";
 import authService from "./services/auth";
 import { useDispatch } from "react-redux";
-import { loginUserSuccess, registerUserSuccess, logOutUser } from "./slice/auth";
+import { loginUserSuccess, registerUserSuccess } from "./slice/auth";
+import {getArticlesStart, getArticlesSuccess} from "./slice/articles";
+import articleService from "./services/article";
 
 
 
@@ -23,6 +25,17 @@ const App = () => {
         }
     }
 
+    const getArticles = async() =>{
+        dispatch(getArticlesStart())
+        try{
+            const response = await articleService.getArticles();
+            console.log(response.articles)
+            dispatch(getArticlesSuccess(response.articles))
+        }catch(err){
+            console.log("getArticles",err)   
+        }
+    }   
+
     
 
     useEffect(() => {
@@ -30,7 +43,8 @@ const App = () => {
        if(token){
         getUser();
        }
-    }, [])
+       getArticles()
+    })
 
     return (
         <div className="App">
